@@ -1,0 +1,58 @@
+# 2024-04-30 Additional data points
+
+## Requested points and comments
+
+An asterisk (*) indicates the name of the new data point, with description described in
+the next section.
+
+- "We would like to have metrics 12 and 13 where SHM = the number of mutations from CDR2 -> end of V-region, without dividing by the alignment length."
+    * IgX_SHM0_undivided
+    * IgX_SHM1_undivided
+- "We would like to have metrics 20 through 23 for all sequences/clones together in one metric, not just for naïve (IgD/IgM) sequences."
+    - For IGHM_IGHD_mutated_by_{reads,clones}, that one just looks at percent of sequences with >0 mutations, so we can do that for all isotypes
+    combined as requested.
+        * IGH_mutated_by_reads
+        * IGH_mutated_by_clone
+    - Data points 16-18 or 19-21 are grouped together and are part of the "3 category" isotype categorization, in which instead of calculating
+    the percent of each of the 5 major isotypes, you instead use 3 categories: IgA/IgG/IgE ("class-switched"), IgD/M with 0 mutations ("naive unmutated"),
+    and IgD/M with >0 mutations ("naive mutated"). So for these, I'm not sure how to make sense of the request other than to further separate the class-switched
+    category into mutated and unmutated.
+        - Incorporation expression
+            * class_switched_mutated_percent_by_reads
+            * class_switched_unmutated_percent_by_reads
+            * naive_mutated_percent_by_reads
+            * naive_unmutated_percent_by_reads
+        - Ignoring expression
+            * class_switched_mutated_percent_by_clone
+            * class_switched_unmutated_percent_by_clone
+            * naive_mutated_percent_by_clone
+            * naive_unmutated_percent_by_clone
+- "We would like to have metrics 12 and 13 filtering only on sequences with >0 mutations V-region, where SHM = the number of mutations from CDR2 -> end of V-region, without dividing by the alignment length."
+    * IgX_SHM0_gt0_undivided
+    * IgX_SHM1_gt0_undivided
+
+## New definitions
+
+- IgX_SHM0_undivided: Mean number of mutations for all sequences with IgX isotype, weighted by each sequence's expression
+- IgX_SHM1_undivided: Mean number of mutations for all unique sequences with IgX isotype,
+- IgX_SHM0_gt0_undivided: Mean number of mutations for all sequences with IgX isotype and >0 mutations, weighted by each sequence's expression
+- IgX_SHM1_gt0_undivided: Mean number of mutations for all unique sequences with IgX isotype and >0 mutations
+
+where `number of mutations` is the number of mismatches from the reference sequence from CDR2 -> end of V-region (not dividing by alignment length)
+
+- IGH_mutated_by_reads: Of all sequences, what percentage of reads are mutated? (have >0 mutations in V-region)
+- IGH_mutated_by_clone: Of all sequences, what percentage of unique sequences are mutated? (have >0 mutations in V-region)
+
+> group of 4 (should sum to 100)
+- class_switched_mutated_percent_by_reads: % expression of all IgA/IgG/IgE sequences with >0 mutations in V-region
+- class_switched_unmutated_percent_by_reads: % expression of all IgA/IgG/IgE sequences with 0 mutations in V-region
+- naive_mutated_percent_by_reads: % expression of all IgD/M sequences with >0 mutations in V-region
+- naive_unmutated_percent_by_reads: % expression of all IgD/M sequences with 0 mutations in V-region
+
+> group of 4 (should sum to 100)
+- class_switched_mutated_percent_by_clone: % of unique sequences with IgA/IgG/IgE isotype and >0 mutations in V-region
+- class_switched_unmutated_percent_by_clone: % of unique sequences with IgA/IgG/IgE isotype and 0 mutations in V-region
+- naive_mutated_percent_by_clone: % of unique sequences with IgD/M isotype and >0 mutations in V-region
+- naive_unmutated_percent_by_clone: % of unique sequences with IgD/M isotype and 0 mutations in V-region
+
+Note: `IGH_umis` and `IGH_reads` are unchanged, they are just added for reference.

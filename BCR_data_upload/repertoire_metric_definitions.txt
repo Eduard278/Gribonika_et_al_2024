@@ -1,0 +1,61 @@
+# Notation
+
+Indexes with a trailing 0/1 indicate that the calculation could be performed in two ways:
+by incorporating RNA expression (denoted by 0) or by "normalizing" each unique clone by
+counting it as 1 instead of using that clone's expression (denoted by 1).
+
+# Basic data point definitions
+
+1. IGH_umis: total number of UMIs that aligned and assembled into a productive receptor sequence (analogous to a receptor RNA count)
+2. IGH_ucdr3: total number of unique CDR3s
+3. IGH_Shannon: Shannon index from skbio.diversity.alpha
+4. IGH_Pielou_evenness: Pielou's evenness index from skbio.diversity.alpha
+5. IGH_Simpson: Simpson index from skbio.diversity.alpha
+6. IGH_Simpson_evenness: Simpson evenness from skbio.diversity.alpha
+7. IGH_Gini_index: Gini index from skbio.diversity.alpha
+8. IGH_d50: Percentage of unique CDR3s that make up the top 50% of the total reads. python implementation below
+
+```python
+import pandas as pd
+def d50(x: pd.Series) -> float:
+    """ Percentage of clones that make up the top 50% of the total reads.
+    X is an series of counts (reads or UMIs)
+    """
+
+    # Important: needs to be sorted first
+    x = x.sort_values(ascending=False)
+    half = x[x.cumsum() <= x.sum() * 0.50]
+    d50 = (len(half) / len(x)) * 100.0
+    return d50
+```
+
+9. IGH_Largest_clone_percent: percentage reads out ot total reads for the single largest CDR3
+
+10. IgX_percent_by_reads: % expression for that isotype (IgX reads divided by total reads)
+11. IgX_percent_by_clone: % of unique CDR3 for that isotype (IgX unique CDR3 divided by total unique CDR3)
+
+12. IgX_SHM0: Mean SHM for all sequences with IgX isotype, weighted by each sequence's expression
+13. IgX_SHM1: Mean SHM for all unique sequences with IgX isotype,
+
+where SHM = the number of mutations from CDR2 -> end of V-region, divided by the alignment length
+
+14. IgX_mean_log_ppost0: Mean Log10(ppost) of all clones (CDR3 Peptide + V + J) with IgX isotype, weighted by each clone's expression
+15. IgX_mean_log_ppost1: Mean Log10(ppost) of all unique clones (CDR3 Peptide + V + J) with IgX isotype
+
+# From Bashford-Rogers 2019
+
+16. class_switched_percent_by_reads: % expression of all IgA/IgG/IgE sequences
+17. naive_mutated_percent_by_reads: % expression of all IgD/M sequences with >0 mutations in V-region
+18. naive_unmutated_percent_by_reads: % expression of all IgD/M sequences with 0 mutations in V-region
+
+19. class_switched_percent_by_clone: % of unique sequences with IgA/IgG/IgE isotype
+20. naive_mutated_percent_by_clone: % of unique sequences with IgD/M isotype and >0 mutations in V-region
+21. naive_unmutated_percent_by_clone: % of unique sequences with IgD/M isotype and 0 mutations in V-region
+
+22. IGHM_IGHD_mutated_by_reads: Of all IgD/M sequences, what percentage of reads are mutated? (have >0 mutations in V-region)
+23. IGHM_IGHD_mutated_by_clone: Of all IgD/M sequences, what percentage of unique sequences are mutated? (have >0 mutations in V-region)
+
+24. IgX-IgY CSR0: % of reads present as two isotypes IgX and IgY
+25. IgX-IgY CSR1: % of unique CDR3 peptide sequences present as two isotypes IgX and IgY
+
+26. IgX_observed_as_other_isotype: % of unique IgX sequences observed as other isotype
